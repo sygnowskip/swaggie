@@ -8,5 +8,5 @@
     "sourceMap": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "dist", "test", "sdk"]
+  "exclude": ["node_modules", "dist", "test", "sdk", "**/*.spec.ts"]
 }

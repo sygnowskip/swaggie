@@ -3,7 +3,7 @@ import { getOperations } from '../../src/spec/operations';
 
 describe('operations', () => {
   it('should parse operations from spec', async () => {
-    const path = `${__dirname}/../petstore.yml`;
+    const path = `${__dirname}/../v2/petstore.yml`;
     const spec = await resolveSpec(path);
     const operations = getOperations(spec);
     expect(operations).toBeDefined();

@@ -1,18 +1,77 @@
 export interface ISchemaV2 {
+  /** Specifies the Swagger Specification version being used */
   swagger: string;
+
+  /** Provides metadata about the API. The metadata can be used by the clients if needed. */
   info: ISchemaInfo;
+
+  /**
+   * The host (name or ip) serving the API. This MUST be the host only and does not include the scheme nor sub-paths.
+   * It MAY include a port.
+   */
   host?: string;
+
+  /**
+   * The base path on which the API is served, which is relative to the host.
+   * If it is not included, the API is served directly under the host.
+   * The value MUST start with a leading slash (/). The basePath does not support path templating.
+   */
   basePath?: string;
+
+  /**
+   * The transfer protocol of the API. Values MUST be from the list: "http", "https", "ws", "wss".
+   */
   schemes?: [string];
+
+  /**
+   * A list of MIME types the APIs can consume. This is global to all APIs but can be overridden on specific API calls.
+   */
   consumes?: [string];
+
+  /**
+   * A list of MIME types the APIs can produce. This is global to all APIs but can be overridden on specific API calls.
+   */
   produces?: [string];
+
+  /** The available paths and operations for the API. */
   paths: { [path: string]: ISchemaPath };
+
+  /** An object to hold data types produced and consumed by operations. */
   definitions: string;
+
+  /**
+   * An object to hold parameters that can be used across operations.
+   * This property does not define global parameters for all operations.
+   */
   parameters?: string;
+
+  /**
+   * An object to hold responses that can be used across operations.
+   * This property does not define global responses for all operations.
+   */
   responses?: string;
+
+  /** Security scheme definitions that can be used across the specification. */
   securityDefinitions?: string;
+
+  /**
+   * A declaration of which security schemes are applied for the API as a whole.
+   * The list of values describes alternative security schemes that can be used
+   * (that is, there is a logical OR between the security requirements).
+   * Individual operations can override this definition.
+   */
   security?: string;
+
+  /**
+   * A list of tags used by the specification with additional metadata.
+   * The order of the tags can be used to reflect on their order by the parsing tools.
+   * Not all tags that are used by the Operation Object must be declared.
+   * The tags that are not declared may be organized randomly or based on the tools' logic.
+   * Each tag name in the list MUST be unique.
+   */
   tags?: string;
+
+  /** Additional external documentation. */
   externalDocs?: ISchemaExternalDocs;
 }
 

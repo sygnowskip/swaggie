@@ -12,7 +12,7 @@ import {
   ApiOperationParam,
   ApiOperationResponse,
   ApiOperationSecurity,
-} from '../types';
+} from './tempTypes';
 
 const SUPPORTED_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
 const DEF_GROUP_NAME = 'default';

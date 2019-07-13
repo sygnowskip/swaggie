@@ -1,18 +1,11 @@
 // tslint:disable: no-string-literal
 
 import { OperationConverter } from './operationConverter';
-import { ISchemaV2 } from './schema/types';
+import { createTestScheme } from './specHelper';
 
 describe('[v2] operationConverter', () => {
-
   it(`should convert operation correctly`, () => {
-    const schema: ISchemaV2 = {
-      swagger: '2',
-      definitions: {},
-      info: {
-        title: 'Test',
-        version: '123',
-      },
+    const schema = createTestScheme({
       paths: {
         '/api/heartbeat': {
           get: {
@@ -45,7 +38,7 @@ describe('[v2] operationConverter', () => {
           },
         },
       },
-    };
+    });
 
     const converter = new OperationConverter(schema);
     const ops = converter.loadOperations();
@@ -68,13 +61,7 @@ describe('[v2] operationConverter', () => {
   });
 
   it(`should apply endpoint's parameters properly to all of it's operations`, () => {
-    const schema: ISchemaV2 = {
-      swagger: '2',
-      definitions: {},
-      info: {
-        title: 'Test',
-        version: '123',
-      },
+    const schema = createTestScheme({
       paths: {
         '/api/heartbeat': {
           parameters: [
@@ -122,7 +109,7 @@ describe('[v2] operationConverter', () => {
           },
         },
       },
-    };
+    });
 
     const converter = new OperationConverter(schema);
     const ops = converter.loadOperations();

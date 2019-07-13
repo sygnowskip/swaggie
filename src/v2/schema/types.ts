@@ -1,4 +1,15 @@
 export type SchemaType = 'http' | 'https' | 'ws' | 'wss';
+export type FieldType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'file' | 'object';
+export type FieldFormat =
+  | 'int32'
+  | 'int64'
+  | 'float'
+  | 'double'
+  | 'byte'
+  | 'binary'
+  | 'date'
+  | 'date-time'
+  | 'password';
 
 export interface ISchemaV2 {
   /** Specifies the Swagger Specification version being used */
@@ -39,7 +50,7 @@ export interface ISchemaV2 {
   paths: { [path: string]: ISchemaPath };
 
   /** An object to hold data types produced and consumed by operations. */
-  definitions: any;
+  definitions: { [name: string]: ISchemaObject };
 
   /**
    * An object to hold parameters that can be used across operations.
@@ -263,7 +274,7 @@ export interface ISchemaOperationResult {
 }
 
 export interface ISchemaReference {
-  $ref: string;
+  $ref?: string;
 }
 
 export interface ISchemaHeaderDefinition {
@@ -339,4 +350,54 @@ export interface ISchemaTag {
 
   /** Additional external documentation for this tag. */
   externalDocs?: ISchemaExternalDocs;
+}
+
+export interface ISchemaObject extends ISchemaObjectCore, ISchemaReference {
+  /**
+   * Adds support for polymorphism. The discriminator is the schema property name that is used to
+   * differentiate between other schema that inherit this schema. The property name used MUST be defined
+   * at this schema and it MUST be in the required property list.
+   * When used, the value MUST be the name of this schema or any schema that inherits it.
+   */
+  discriminator?: string;
+
+  /**
+   * Relevant only for Schema "properties" definitions. Declares the property as "read only".
+   * This means that it MAY be sent as part of a response but MUST NOT be sent as part of the request.
+   * Properties marked as readOnly being true SHOULD NOT be in the required list of the defined schema.
+   * Default value is false.
+   */
+  readOnly?: boolean;
+
+  /**
+   * This MAY be used only on properties schemas. It has no effect on root schemas.
+   * Adds Additional metadata to describe the XML representation format of this property.
+   */
+  xml?: any;
+
+  /**
+   * Additional external documentation for this schema.
+   */
+  externalDocs?: ISchemaExternalDocs;
+
+  /**
+   * A free-form property to include an example of an instance for this schema.
+   */
+  example?: any;
+}
+
+export interface ISchemaObjectCore {
+  type: FieldType;
+  description?: string;
+  required?: string[];
+  properties?: { [name: string]: ISchemaProperty | ISchemaReference };
+}
+
+export interface ISchemaProperty {
+  type: FieldType;
+  format?: FieldFormat;
+  items?: ISchemaProperty | ISchemaReference;
+  enum?: string[];
+  fullEnum?: { [name: string]: any };
+  readOnly?: boolean;
 }

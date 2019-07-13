@@ -1,4 +1,4 @@
-import { isBasicType } from '../util';
+import { isBasicType } from '../../tools/util';
 
 export const DOC = ' * ';
 export const DEFAULT_SP = '  ';

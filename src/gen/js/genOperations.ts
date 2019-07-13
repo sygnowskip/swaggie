@@ -8,7 +8,7 @@ import {
   groupOperationsByGroupName,
   getBestResponse,
   escapeReservedWords,
-} from '../util';
+} from '../../tools/util';
 import { IServiceClient, IApiOperation, IOperationParam } from './models';
 import { generateBarrelFile } from './createBarrel';
 

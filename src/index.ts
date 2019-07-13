@@ -1,6 +1,6 @@
 import { resolveSpec, getOperations } from './spec';
 import genJsCode from './gen/js';
-import { removeOldFiles } from './gen/util';
+import { removeOldFiles } from './tools/util';
 import * as assert from 'assert';
 
 export function genCode(options: ClientOptions): Promise<any> {

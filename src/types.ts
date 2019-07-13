@@ -26,7 +26,7 @@ interface ApiSpec {
   contentTypes: string[];
 }
 
-type HttpMethod = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch';
+export type HttpMethod = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch';
 
 interface ApiOperation {
   id: string;
@@ -43,7 +43,7 @@ interface ApiOperation {
   tags?: string[];
 }
 
-interface ApiOperationParam extends ApiOperationParamBase {
+export interface ApiOperationParam extends ApiOperationParamBase {
   name: string;
   in: 'header' | 'path' | 'query' | 'body' | 'formData';
   description: string;
@@ -91,7 +91,7 @@ interface ApiOperationParamGroups {
   body?: any;
 }
 
-interface ApiOperationResponse {
+export interface ApiOperationResponse {
   code: string;
   description: string;
   schema: object;
@@ -99,7 +99,7 @@ interface ApiOperationResponse {
   examples: object;
 }
 
-interface ApiOperationSecurity {
+export interface ApiOperationSecurity {
   id: string;
   scopes?: string[];
 }

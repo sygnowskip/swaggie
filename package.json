@@ -26,6 +26,7 @@
     "prebuild": "npm run init",
     "build": "tsc",
     "test": "jest",
+    "test:watch": "jest --watch",
     "predev": "npm run init",
     "dev": "tsc -w",
     "init": "npm run clean",

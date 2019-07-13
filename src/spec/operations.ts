@@ -1,10 +1,12 @@
 const SUPPORTED_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
 
 export function getOperations(spec: ApiSpec): ApiOperation[] {
-  return getPaths(spec).reduce<ApiOperation[]>(
+  const res = getPaths(spec).reduce<ApiOperation[]>(
     (ops, pathInfo) => ops.concat(getPathOperations(pathInfo, spec)),
     []
   );
+
+  return res;
 }
 
 function getPaths(spec: ApiSpec): object[] {
@@ -29,6 +31,7 @@ function inheritPathParams(op, spec, pathInfo) {
 }
 
 function getPathOperation(method: HttpMethod, pathInfo, spec: ApiSpec): ApiOperation {
+  // console.log('getPathOperation INPUT', pathInfo);
   const op = Object.assign({ method, path: pathInfo.path, parameters: [] }, pathInfo[method]);
   op.id = op.operationId;
 
@@ -62,6 +65,7 @@ function getPathOperation(method: HttpMethod, pathInfo, spec: ApiSpec): ApiOpera
   if (!op.accepts || !op.accepts.length) {
     op.accepts = spec.accepts.slice();
   }
+  // console.log('getPathOperation OUTPUT', op);
   return op as ApiOperation;
 }
 

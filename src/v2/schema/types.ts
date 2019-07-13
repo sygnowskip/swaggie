@@ -1,3 +1,5 @@
+export type SchemaType = 'http' | 'https' | 'ws' | 'wss';
+
 export interface ISchemaV2 {
   /** Specifies the Swagger Specification version being used */
   swagger: string;
@@ -19,40 +21,42 @@ export interface ISchemaV2 {
   basePath?: string;
 
   /**
-   * The transfer protocol of the API. Values MUST be from the list: "http", "https", "ws", "wss".
+   * The transfer protocol of the API
    */
-  schemes?: [string];
+  schemes?: SchemaType[];
 
   /**
    * A list of MIME types the APIs can consume. This is global to all APIs but can be overridden on specific API calls.
    */
-  consumes?: [string];
+  consumes?: string[];
 
   /**
    * A list of MIME types the APIs can produce. This is global to all APIs but can be overridden on specific API calls.
    */
-  produces?: [string];
+  produces?: string[];
 
   /** The available paths and operations for the API. */
   paths: { [path: string]: ISchemaPath };
 
   /** An object to hold data types produced and consumed by operations. */
-  definitions: string;
+  definitions: any;
 
   /**
    * An object to hold parameters that can be used across operations.
    * This property does not define global parameters for all operations.
    */
-  parameters?: string;
+  parameters?: { [name: string]: ISchemaOperationRequest };
 
   /**
    * An object to hold responses that can be used across operations.
    * This property does not define global responses for all operations.
    */
-  responses?: string;
+  responses?: ISchemaResponseDefinitions;
 
-  /** Security scheme definitions that can be used across the specification. */
-  securityDefinitions?: string;
+  /**
+   * Security scheme definitions that can be used across the specification.
+   */
+  securityDefinitions?: { [def: string]: ISecurityScheme };
 
   /**
    * A declaration of which security schemes are applied for the API as a whole.
@@ -60,7 +64,7 @@ export interface ISchemaV2 {
    * (that is, there is a logical OR between the security requirements).
    * Individual operations can override this definition.
    */
-  security?: string;
+  security?: ISecurityRequirement;
 
   /**
    * A list of tags used by the specification with additional metadata.
@@ -69,7 +73,7 @@ export interface ISchemaV2 {
    * The tags that are not declared may be organized randomly or based on the tools' logic.
    * Each tag name in the list MUST be unique.
    */
-  tags?: string;
+  tags?: ISchemaTag[];
 
   /** Additional external documentation. */
   externalDocs?: ISchemaExternalDocs;
@@ -108,9 +112,26 @@ export interface ISchemaPath {
 }
 
 export interface ISchemaOperation {
-  tags?: [string];
+  /**
+   * A list of tags for API documentation control.
+   * Tags can be used for logical grouping of operations by resources or any other qualifier.
+   */
+  tags?: string[];
+
+  /**
+   * A short summary of what the operation does.
+   * For maximum readability in the swagger-ui, this field SHOULD be less than 120 characters.
+   */
   summary?: string;
+
+  /**
+   * A verbose explanation of the operation behavior. GFM syntax can be used for rich text representation.
+   */
   description?: string;
+
+  /**
+   * Additional external documentation for this operation.
+   */
   externalDocs?: ISchemaExternalDocs;
 
   /**
@@ -124,18 +145,56 @@ export interface ISchemaOperation {
    * A list of MIME types the operation can consume. This overrides the consumes definition at the Swagger Object.
    * An empty value MAY be used to clear the global definition. Value MUST be as described under Mime Types.
    */
-  consumes?: [string];
+  consumes?: string[];
 
   /**
    * A list of MIME types the operation can produce This overrides the consumes definition at the Swagger Object.
    * An empty value MAY be used to clear the global definition. Value MUST be as described under Mime Types.
    */
-  produces?: [string];
-  parameters?: [ISchemaOperationRequest | ISchemaReference];
+  produces?: string[];
+
+  /**
+   * A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item,
+   * the new definition will override it, but can never remove it. The list MUST NOT include duplicated parameters.
+   * A unique parameter is defined by a combination of a name and location. The list can use
+   * the Reference Object to link to parameters that are defined at the Swagger Object's parameters.
+   * There can be one "body" parameter at most.
+   */
+  parameters?: Array<ISchemaOperationRequest | ISchemaReference>;
+
+  /**
+   * The list of possible responses as they are returned from executing this operation.
+   */
   responses: { [status: string]: ISchemaOperationResult | ISchemaReference };
-  schemes?: [string];
+
+  /**
+   * The transfer protocol for the operation.
+   * The value overrides the Swagger Object schemes definition.
+   */
+  schemes?: SchemaType[];
+
+  /**
+   * Declares this operation to be deprecated. Usage of the declared operation should be refrained.
+   * Default value is false.
+   */
   deprecated?: boolean;
-  security?: { [def: string]: any };
+
+  /**
+   * A declaration of which security schemes are applied for this operation.
+   * The list of values describes alternative security schemes that can be used
+   * (that is, there is a logical OR between the security requirements).
+   * This definition overrides any declared top-level security.
+   * To remove a top-level security declaration, an empty array can be used.
+   */
+  security?: ISecurityRequirement;
+}
+
+export interface ISecurityRequirement {
+  [def: string]: string[];
+}
+
+export interface ISchemaResponseDefinitions {
+  [name: string]: ISchemaOperationRequest;
 }
 
 export interface ISchemaExternalDocs {
@@ -144,7 +203,8 @@ export interface ISchemaExternalDocs {
 }
 
 export interface ISchemaOperationRequest {
-  /** Required. The name of the parameter. Parameter names are case sensitive.
+  /**
+   * The name of the parameter. Parameter names are case sensitive.
    * If in is "path", the name field MUST correspond to the associated path segment
    * from the path field in the Paths Object. See Path Templating for further information.
    * For all other cases, the name corresponds to the parameter name used based on the in property.
@@ -152,9 +212,9 @@ export interface ISchemaOperationRequest {
   name: string;
 
   /**
-   * 	Required. The location of the parameter. Possible values are "query", "header", "path", "formData" or "body".
+   * The location of the parameter.
    */
-  in: string;
+  in: 'query' | 'header' | 'path' | 'formData' | 'body';
 
   /**
    * A brief description of the parameter. This could contain examples of use.
@@ -179,12 +239,12 @@ export interface ISchemaOperationRequest {
 
 export interface ISchemaOperationResult {
   /**
-   * Required. A short description of the response. GFM syntax can be used for rich text representation.
+   * A short description of the response. GFM syntax can be used for rich text representation.
    */
   description: string;
 
   /**
-   * Object	A definition of the response structure. It can be a primitive, an array or an object.
+   * A definition of the response structure. It can be a primitive, an array or an object.
    * If this field does not exist, it means no content is returned as part of the response.
    * As an extension to the Schema Object, its root type value may also be "file".
    * This SHOULD be accompanied by a relevant produces mime-type.
@@ -192,12 +252,12 @@ export interface ISchemaOperationResult {
   schema?: any;
 
   /**
-   * Object	A list of headers that are sent with the response.
+   * A list of headers that are sent with the response.
    */
   headers?: { [header: string]: ISchemaHeaderDefinition };
 
   /**
-   * Object	An example of the response message.
+   * An example of the response message.
    */
   examples?: { [mimeType: string]: any };
 }
@@ -223,6 +283,60 @@ export interface ISchemaHeaderDefinition {
   maxItems?: number;
   minItems?: number;
   uniqueItems?: boolean;
-  enum?: [any];
+  enum?: any[];
   multipleOf?: number;
+}
+
+export interface ISecurityScheme {
+  /**
+   * The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+   */
+  type: string;
+
+  /**
+   * A short description for security scheme.
+   */
+  description?: string;
+
+  /**
+   * The name of the header or query parameter to be used.
+   */
+  name: string;
+
+  /**
+   * The location of the API key. Valid values are "query" or "header".
+   */
+  in: 'query' | 'header';
+
+  /**
+   * The flow used by the OAuth2 security scheme.
+   * Valid values are "implicit", "password", "application" or "accessCode".
+   */
+  flow: string;
+
+  /**
+   * The authorization URL to be used for this flow. This SHOULD be in the form of a URL.
+   */
+  authorizationUrl: string;
+
+  /**
+   * The token URL to be used for this flow. This SHOULD be in the form of a URL.
+   */
+  tokenUrl: string;
+
+  /**
+   * The available scopes for the OAuth2 security scheme.
+   */
+  scopes: { [name: string]: string };
+}
+
+export interface ISchemaTag {
+  /** The name of the tag. */
+  name: string;
+
+  /** A short description for the tag. GFM syntax can be used for rich text representation. */
+  description?: string;
+
+  /** Additional external documentation for this tag. */
+  externalDocs?: ISchemaExternalDocs;
 }

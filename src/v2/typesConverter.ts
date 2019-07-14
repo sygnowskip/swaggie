@@ -1,21 +1,24 @@
 import { ISchemaV2, FieldType, FieldFormat, ISchemaProperty, ISchemaObject } from './schema/types';
+import * as _ from 'lodash';
 
-export class TypesGenerator {
+export class TypesConverter {
   constructor(private schema: ISchemaV2) {}
 
   loadTypes(): IDefinition[] {
-    const defs = this.getDefinitionsList();
-    return defs.map(
+    const defs = this.getDefinitionsList().map(
       (d) =>
         ({
           type: d.type,
           originalName: d.name,
           isGeneric: d.name.indexOf('[') > -1,
           name: getName(d.name),
+          description: d.description,
           secondType: getSecondType(d.name),
           properties: getProperties(d),
         } as IDefinition)
     );
+
+    return this.removeGenericsDuplicates(defs);
   }
 
   private getDefinitionsList(): IExtSchemaObject[] {
@@ -29,9 +32,19 @@ export class TypesGenerator {
       )
     );
   }
+
+  /**
+   * After converting types to proper generics, we will have duplicates
+   * And we need to get rid of them
+   */
+  private removeGenericsDuplicates(defs: IDefinition[]): IDefinition[] {
+    return _.uniqBy<IDefinition>(defs, (def) => def.name);
+  }
 }
 
-function getPropertiesList(props?: { [name: string]: IPropertyDefinition }): IExtSchemaProperty[] {
+function getPropertiesList(props?: {
+  [name: string]: IPropertyDefinition;
+}): INamedPropertyDefinition[] {
   if (!props) {
     return [];
   }
@@ -54,16 +67,17 @@ function getSecondType(name: string): string {
   return name.substring(name.indexOf('[') + 1, name.indexOf(']'));
 }
 
-function getProperties(type: IExtSchemaObject): IPropertyDefinition[] {
+function getProperties(type: IExtSchemaObject): INamedPropertyDefinition[] {
   if (!type.propertiesList || type.propertiesList.length === 0) {
     return [];
   }
 
-  return type.propertiesList.map<IPropertyDefinition>((p: IExtSchemaObject) => ({
+  return type.propertiesList.map<INamedPropertyDefinition>((p: IExtSchemaObject) => ({
     readOnly: p.readOnly || false,
     example: p.example,
     type: p.type,
-    required: type.required && type.required.indexOf(p.name) > -1,
+    required: !!type.required && type.required.indexOf(p.name) > -1,
+    name: p.name,
   }));
 }
 
@@ -71,15 +85,17 @@ export interface IDefinition {
   type: FieldType;
   isGeneric: boolean;
   originalName: string;
+  description?: string;
   name: string;
   secondType: string;
-  properties: IPropertyDefinition[];
+  properties: INamedPropertyDefinition[];
 }
 
 export interface IPropertyDefinition {
   type: FieldType;
   format?: FieldFormat;
   items?: ISchemaProperty;
+  description?: string;
   enum?: string[];
   fullEnum?: { [name: string]: any };
   readOnly?: boolean;
@@ -93,5 +109,9 @@ export interface IExtSchemaObject extends ISchemaObject {
 }
 
 export interface IExtSchemaProperty extends ISchemaProperty {
+  name: string;
+}
+
+export interface INamedPropertyDefinition extends IPropertyDefinition {
   name: string;
 }

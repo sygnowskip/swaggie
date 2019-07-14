@@ -25,7 +25,7 @@
   "scripts": {
     "prebuild": "npm run init",
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --ci",
     "test:watch": "jest --watch",
     "predev": "npm run init",
     "dev": "tsc -w",

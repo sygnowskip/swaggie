@@ -28,6 +28,7 @@ const args: any = program
     '-b, --baseUrl <string>',
     'Base URL that will be used as a default value in the clients. Default: ""'
   )
+  .option('-n, --newEngine', 'Use the new experimental engine', false)
   .option(
     '-r, --reactHooks',
     'Generate additional context that can be consumed in your application more easily. Requires React Hooks. Default: false'

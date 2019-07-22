@@ -1,9 +1,9 @@
 // tslint:disable: no-string-literal
 
-import { OperationConverter } from './operationConverter';
+import { OperationLoader } from './operationLoader';
 import { createTestScheme } from './specHelper';
 
-describe('[v2] operationConverter', () => {
+describe('[v2] operationLoader', () => {
   it(`should convert operation correctly`, () => {
     const schema = createTestScheme({
       paths: {
@@ -40,7 +40,7 @@ describe('[v2] operationConverter', () => {
       },
     });
 
-    const converter = new OperationConverter(schema);
+    const converter = new OperationLoader(schema);
     const ops = converter.loadOperations();
     expect(ops).toBeDefined();
     expect(ops.length).toBe(1);
@@ -111,7 +111,7 @@ describe('[v2] operationConverter', () => {
       },
     });
 
-    const converter = new OperationConverter(schema);
+    const converter = new OperationLoader(schema);
     const ops = converter.loadOperations();
     expect(ops).toBeDefined();
     expect(ops.length).toBe(2);
@@ -132,7 +132,7 @@ describe('[v2] operationConverter', () => {
   });
 
   describe('createOpId', () => {
-    const converter = new OperationConverter({} as any);
+    const converter = new OperationLoader({} as any);
 
     it('should get operationId correctly #1', () => {
       const opId = converter['createOpId']('get', {
@@ -181,7 +181,7 @@ describe('[v2] operationConverter', () => {
   });
 
   describe('getGroupName', () => {
-    const converter = new OperationConverter({} as any);
+    const converter = new OperationLoader({} as any);
 
     it('should get default group name #1', () => {
       const opId = converter['getGroupName'](null);

@@ -21,7 +21,7 @@ export class TypesSerializer {
     } {
   ${def.properties.map(
     (p) => `${getComment(p.description)}${p.name}${p.required ? '?' : ''}: ${p.type};`
-  )}
+  ).join('\n')}
 }
 `;
   }

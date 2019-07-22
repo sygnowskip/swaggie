@@ -3,6 +3,7 @@ interface ClientOptions {
   outDir: string;
   semicolon?: boolean;
   baseUrl: string;
+  newEngine: boolean;
   reactHooks: boolean;
   preferAny?: boolean;
 }

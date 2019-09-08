@@ -1,4 +1,4 @@
-import { saveFile, join } from '../util';
+import { saveFile, join } from '../../tools/util';
 import { DOC, SP, ST, getDocType, getTSParamType } from './support';
 import { uniq, uniqBy } from 'lodash';
 import { SchemaDefinition } from 'js-yaml';

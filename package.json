@@ -52,7 +52,8 @@
     "got": "10.7.0",
     "js-yaml": "3.13.1",
     "lodash": "^4.17.11",
-    "mkdirp": "^1.0.3"
+    "mkdirp": "^1.0.3",
+    "swagger2openapi": "6.0.3"
   },
   "devDependencies": {
     "@types/ejs": "3.0.4",

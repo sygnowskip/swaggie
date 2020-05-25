@@ -1,5 +1,6 @@
 import YAML from 'js-yaml';
 import httpClient from 'got';
+import { ApiSpec } from '../openapi/specTypes';
 
 export interface SpecOptions {
   /**

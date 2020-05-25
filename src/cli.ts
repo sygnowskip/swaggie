@@ -47,7 +47,7 @@ const args: any = program
 
 runCodeGenerator(args).then(complete, error);
 
-function complete(spec: ApiSpec) {
+function complete(spec: Schema) {
   process.exit(0);
 }
 
